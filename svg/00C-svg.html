@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="es">
+
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>TAREA II</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+  <link rel="stylesheet" href="/css/style.css">
+  <script src="/JS/d3.js"></script>
+
+
+</head>
+
+
+<body>
+  
+<!--navbar-->
+<div class="navbar navbar-expand-lg navbar-dark bg-secondary shadow mb-4">
+        
+  <div class="container>
+    <div class="row"> </div>
+      <div class="col-12 text-center">      
+    <a class="navbar-brand" href="#">TAREA II SVG
+    </a>   
+   
+    <a class="navbar-brand" href="#">
+    </a>
+
+  </div>
+  </div>
+
+  <!--/navbar-->
+
+  <h1>TAREA SVG</h1>
+
+  <div class="col-md-12">
+    <div id="grafica" class="viz mb-4 shadow"></div>
+    
+  </div>
+
+  <script>
+     ancho = d3.select('#grafica').style('width').slice(0,-2)
+     alto = ancho * 9 / 16
+
+     svg = d3.select('#grafica')
+     .append('svg')
+     .attr('width', ancho)
+     .attr('height', alto)
+    
+    x = d3.scaleLinear()
+          .range([0, ancho])
+    y = d3.scaleLinear()
+          .range([0, alto])
+    
+    function render(data) {
+
+      AnoMax = d3.max(data, function(d) { return d.Ano })
+      AnoMin = d3.min(data, d => d.Ano)
+      console.log('Valor mas alto' + AnoMax)
+      console.log('Valor mas bajo' + AnoMin)
+
+
+      x.domain([AnoMin, AnoMax])
+      y.domain([d3.min(data, d => d.ValorUSD),
+                d3.max(data, d => d.ValorUSD)])
+
+      
+                
+                
+      circles = svg.selectAll('circle')
+                   .data(data)
+
+      circles.enter()
+             .append('circle')
+             .attr('cx', function(d) { return x(d.Ano) })
+             .attr('cy', function(d) { return y(d.ValorUSD) })
+             .attr('r', 8)
+             .attr('fill', 'orange')
+    }
+    
+    //data = []
+    
+    function load() {
+      d3.csv('/UNIR3/Consolidado.csv').then(function(data) {
+        data.forEach(function(d){ 
+          d.ValorUSD = +d.ValorUSD
+          d.Ano = +d.Ano
+        })
+        //console.log(data)
+
+        render(data)
+      })
+
+    }
+load()
+
+
+</script>
+
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" ></script>
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" ></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" ></script>
+
+</body>
+</html>
